@@ -123,6 +123,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "angular-firebase"
+    }
+  },
+  "defaultProject": "angular-firebase",
+  "cli": {
+    "analytics": "b473837e-7fc3-4254-ba08-254a6af6b030"
+  }
 }
