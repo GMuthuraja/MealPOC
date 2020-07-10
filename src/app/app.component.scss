@@ -1,0 +1,166 @@
+@font-face {
+    font-family: "SaudiaRegular";
+    src: url("/assets/fonts/SaudiaTextWeb-Regular.ttf");
+  }
+
+  @font-face {
+    font-family: "SaudiaArabicLight";
+    src: url("/assets/fonts/SaudiaTextArabic-Light.ttf");
+  }
+
+  :host {
+    font-family: "SaudiaRegular", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  /* MealPOC Style starts*/
+
+  html {
+    font-size: 62.5%;
+    font-family: "SaudiaRegular", "Helvetica" !important;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .content {
+    align-items: center;
+    font-size: 62.5%;
+    font-family: "Helvetica" !important;
+    padding: 0;
+    margin: 0;
+  }
+
+  .formsHolder {
+    display: flex;
+  }
+
+  .form1,
+  .form2 {
+    padding: 03%;
+    width: 44%
+  }
+
+  h4 {
+    font-family: "SaudiaRegular", Arial, Helvetica, sans-serif;
+    font-size: 2em;
+    color: #171847;
+    margin-bottom: 16px;
+  }
+
+  fieldset {
+    border: solid1px#919191;
+    border-radius: 5px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  legend {
+    font-size: 1.4em;
+    color: #171847;
+  }
+
+  input,
+  select {
+    font-size: 1.4em;
+    color: #171847;
+    border: none !important;
+    width: 100%;
+  }
+
+  input:focus,
+  select:focus,
+  select:active,
+  select:hover,
+  option,
+  option:focus {
+    border: none !important;
+    outline: none !important;
+    background: #fff;
+    color: #171847;
+    width: 100%;
+  }
+
+  input[type="text"] {
+    padding: 4px0;
+  }
+
+  button {
+    color: #fff;
+    background: #A39161;
+    font-size: 1.4em;
+    font-weight: bold;
+    min-height: 45px;
+    border: none !important;
+    margin-top: 8px;
+    border-radius: 5px;
+  }
+
+  button:focus {
+    border: none !important;
+    outline: none !important
+  }
+
+  .buttonL {
+    margin-right: 4px;
+  }
+
+  .buttonR {
+    margin-left: 4px;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .full {
+    width: 100%;
+  }
+
+  .half {
+    width: 50%;
+  }
+
+  table {
+    border: 0;
+    width: 100%;
+    padding: 3%3%03%;
+  }
+
+  th {
+    font-size: 1.6em;
+    font-weight: bold;
+    padding: 8px0;
+    text-align: left;
+  }
+
+  tr:nth-child(even) {
+    background: #f2f3f4;
+    padding: 5px0;
+  }
+
+  td {
+    padding: 8px0;
+    font-size: 1.4em;
+  }
+
+  p {
+    width: 94%;
+    padding: 3%;
+    font-size: 1.6em;
+    font-weight: bold;
+  }
+
+  /* Responsive Styles */
+  @mediascreen and (max-width: 767px) {}
+
+  @mediascreen and (max-width: 575px) {
+    .formsHolder {
+      display: bolck;
+      width: 100%;
+    }
+  }

@@ -1,229 +1,86 @@
-<style>
-  :host {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 16px;
-    color: #333;
-    box-sizing: border-box;
-    margin:0;
-  }
-
-  .spacer {
-    flex: 1;
-  }
-
-
- /* MealPOC Style starts*/
-
- html {
-    font-size: 62.5%;
-    font-family: "Helvetica" !important;
-}
-body
-{
-  margin:0;
-}
- .content {
-    align-items: center;
-    font-size: 62.5%;
-    font-family: "Helvetica" !important;
-    padding:0;
-    margin: 0;
-  }
-.formsHolder
-{
-  display:flex;
-}
-.form1, .form2
-  {
-    padding:0 3%;
-    width:44%
-  }
- h4
-  {
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:2em;
-    color:#171847;
-    margin-bottom:16px;
-  }
-fieldset
-{
-  border:solid 1px #919191;
-  border-radius:5px;
-  margin-top:8px;
-  margin-bottom:8px;
-}
-legend{
-  font-size: 1.4em;
-  color:#171847;
-}
-input
-{
-  font-size: 1.4em;
-  color:#171847;
-  border:none !important;
-  width:100%;
-}
-input:focus, input:hover
-{
-  border:none !important;
-  outline:none !important
-}
-input[type="text"]
-{
-  padding:4px 0;
-}
-button
-{
-  color:#fff;
-  background:#A39161;
-  font-size:1.4em;
-  font-weight:bold;
-  min-height: 45px;
-  border:none !important;
-  margin-top:8px;
-  border-radius:5px;
-}
-button:focus
-{
-  border:none !important;
-  outline:none !important
-}
-.buttonL
-{
-  margin-right:4px;
-}
-.buttonR
-{
-  margin-left:4px;
-}
-.flex
-{
-  display:flex;
-}
-.full
-{
-  width:100%;
-}
-.half
-{
-  width:50%;
-}
-table
-{
- border:0;
- width:100%;
- padding:3% 3% 0 3%;
-}
-th {
-  font-size: 1.6em;
-  font-weight: bold;
-  padding:8px 0;
-  text-align:left;
-}
-tr:nth-child(even) {
-  background:#f2f3f4;
-  padding:5px 0;
-}
-td {
-  padding:8px 0;
-  font-size: 1.4em;
-}
-p {
-  width:94%;
-  padding:3%;
-  font-size: 1.6em;
-  font-weight: bold;
-}
-  /* Responsive Styles */
-  @media screen and (max-width: 767px) {
-
-  }
-
-  @media screen and (max-width: 575px) {
-
-  }
-  /* MealPOC Style ends*/
-
-</style>
-
-
 <div class="content" role="main">
-<div class="formsHolder">
-<div class="form1">
-<h4>By Flight</h4>
-<fieldset>
-  <legend>Flight Number</legend>
-  <input type="text" value="1022">
-</fieldset>
-<fieldset>
-  <legend>Airport</legend>
-  <input type="text" value="JED">
-</fieldset>
-<fieldset>
-  <legend>Flight date</legend>
-  <input type="date" value="2019-04-15">
-</fieldset>
-<div class="flex">
-  <button type="button" class="half buttonL">Add</button>
-  <button type="button" class="half buttonR">Find</button>
-</div>
-</div>
-<div class="form2">
-  <h4>By Station</h4>
-  <fieldset>
-    <legend>Airport</legend>
-    <input type="text" value="JED">
-  </fieldset>
-  <div class="flex">
-    <button type="button" class="full">Find</button>
+  <div class="formsHolder">
+    <div class="form1">
+      <h4>By Flight</h4>
+      <fieldset>
+        <legend>Flight Number</legend>
+        <input type="text" value="1022">
+      </fieldset>
+      <fieldset>
+        <legend>Airport</legend>
+        <select>
+          <option>JED</option>
+          <option>RUH</option>
+        </select>
+      </fieldset>
+      <fieldset>
+        <legend>Flight date</legend>
+        <input type="date" value="2019-04-15">
+      </fieldset>
+      <div class="flex">
+        <button type="button" class="half buttonL">Add</button>
+        <button type="button" class="half buttonR">Find</button>
+      </div>
+    </div>
+    <div class="form2">
+      <h4>By Station</h4>
+      <fieldset>
+        <legend>Airport</legend>
+        <select>
+          <option>JED</option>
+          <option>RUH</option>
+        </select>
+      </fieldset>
+      <div class="flex">
+        <button type="button" class="full">Find</button>
+      </div>
+    </div>
   </div>
-</div>
-</div>
-<div >
-<table>
-  <tr>
-      <th>Passenger Name</th>
-      <th>Booking Reference</th>
-      <th>E-Ticket Number</th>
-      <th>Departure Airport</th>
-      <th>Arrival Airport</th>
-      <th>Updated on</th>
-  </tr>
-  <tr>
-      <td>Peter Parker</td>
-      <td>KDL009484</td>
-      <td>SV009484</td>
-      <td>Jeddah</td>
-      <td>Riyah</td>
-      <td>2020-06-09</td>
-  </tr>
-  <tr>
-    <td>Peter Parker</td>
-    <td>KDL009484</td>
-    <td>SV009484</td>
-    <td>Jeddah</td>
-    <td>Riyah</td>
-    <td>2020-06-09</td>
-</tr>
-<tr>
-  <td>Peter Parker</td>
-  <td>KDL009484</td>
-  <td>SV009484</td>
-  <td>Jeddah</td>
-  <td>Riyah</td>
-  <td>2020-06-09</td>
-</tr>
-<tr>
-  <td>Peter Parker</td>
-  <td>KDL009484</td>
-  <td>SV009484</td>
-  <td>Jeddah</td>
-  <td>Riyah</td>
-  <td>2020-06-09</td>
-</tr>
-</table>
-<p>Total</p>
-</div>
+  <div>
+    <table>
+      <tr>
+        <th>Passenger Name</th>
+        <th>Booking Reference</th>
+        <th>E-Ticket Number</th>
+        <th>Departure Airport</th>
+        <th>Arrival Airport</th>
+        <th>Updated on</th>
+      </tr>
+      <tr>
+        <td>Peter Parker</td>
+        <td>KDL009484</td>
+        <td>SV009484</td>
+        <td>Jeddah</td>
+        <td>Riyah</td>
+        <td>2020-06-09</td>
+      </tr>
+      <tr>
+        <td>Peter Parker</td>
+        <td>KDL009484</td>
+        <td>SV009484</td>
+        <td>Jeddah</td>
+        <td>Riyah</td>
+        <td>2020-06-09</td>
+      </tr>
+      <tr>
+        <td>Peter Parker</td>
+        <td>KDL009484</td>
+        <td>SV009484</td>
+        <td>Jeddah</td>
+        <td>Riyah</td>
+        <td>2020-06-09</td>
+      </tr>
+      <tr>
+        <td>Peter Parker</td>
+        <td>KDL009484</td>
+        <td>SV009484</td>
+        <td>Jeddah</td>
+        <td>Riyah</td>
+        <td>2020-06-09</td>
+      </tr>
+    </table>
+    <p>Total</p>
+  </div>
 </div>
 
 <router-outlet></router-outlet>
