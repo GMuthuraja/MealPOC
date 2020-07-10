@@ -10,6 +10,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 
 export class AppComponent {
 
+  title = 'angular-firebase';
+
   constructor(private firestore: AngularFirestore) {
 
     let payload = {
@@ -24,7 +26,7 @@ export class AppComponent {
       date: '2020-07-15'
     }
 
-    //this.firestore.collection('FlightInfo').doc(payload.flight_no).set(payload);
+    this.firestore.collection('FlightInfo').doc(payload.flight_no).set(payload);
     
     //this.firestore.doc('FlightInfo/' +payload.flight_no).update(res);
 
