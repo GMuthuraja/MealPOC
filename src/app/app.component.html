@@ -176,22 +176,22 @@
       <h4>By Flight</h4>
       <fieldset>
         <legend>Flight Number</legend>
-        <input type="text" value="1022">
+        <input type="text" value="1022" [(ngModel)]="flightNum">
       </fieldset>
       <fieldset>
         <legend>Airport</legend>
-        <select>
+        <select [(ngModel)]="airportName">
           <option>JED - Jeddah [King Abdul Aziz Airport]</option>
           <option>RUH - Riyadh [King Khalid Airport]</option>
         </select>
       </fieldset>
       <fieldset>
         <legend>Flight date</legend>
-        <input type="date" value="2019-04-15">
+        <input type="date" value="2019-04-15" [(ngModel)]="depatureDate">
       </fieldset>
       <div class="flex">
-        <button type="button" class="half buttonL">Add</button>
-        <button type="button" class="half buttonR">Find</button>
+        <button type="button" class="half buttonL" (click)="addFlight()">Add</button>
+        <button type="button" class="half buttonR" (click)="findFlight()">Find</button>
       </div>
     </div>
     <div class="form2">
@@ -204,7 +204,7 @@
         </select>
       </fieldset>
       <div class="flex">
-        <button type="button" class="full">Find</button>
+        <button type="button" class="full" (click)="findFlightByAirport()">Find</button>
       </div>
     </div>
   </div>
