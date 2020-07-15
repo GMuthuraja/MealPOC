@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { HttpClient } from "@angular/common/http";
 import { DatePipe } from '@angular/common';
@@ -14,6 +15,8 @@ export class AppComponent {
   airportList: any;
   passengerInfo = [];
   currentDate = new Date();
+  minDate: any;
+  showLoader: boolean = false;
 
   @ViewChild('departDate') departDate;
   @ViewChild('airportName') airportName;
@@ -23,9 +26,11 @@ export class AppComponent {
   constructor(
     private firestore: AngularFirestore,
     private datePipe: DatePipe,
+    private alertController: AlertController,
     private httpClient: HttpClient) {
 
     this.fetchAirportList();
+    this.minDate = this.datePipe.transform(new Date, 'yyyy-MM-dd');
 
     //this.firestore.doc('FlightInfo/' +payload.flight_no).update(res);
     //this.firestore.doc('FlightInfo/' + payload.flight_no).delete();
@@ -47,32 +52,34 @@ export class AppComponent {
     let departDate = this.departDate.nativeElement.value;
 
     if (!flightNum) {
-      alert('Flight number required.');
+      this.notify('Flight number required.');
     } else if (!airportName) {
-      alert('Please select the airport.');
+      this.notify('Please select the airport.');
     } else if (!departDate) {
-      alert('Please select the departure date.');
+      this.notify('Please select the departure date.');
     } else {
 
       let payload = {
         flight_no: flightNum,
         dept_airport: airportName,
+        airport_code: airportName.split('-')[0],
         depart_date: departDate
       }
 
+      this.showLoader = true;
       this.firestore.collection("FlightInfo").get().subscribe(q => {
         if (q.empty) {
           console.log("no collection");
           this.firestore.collection('FlightInfo').add(payload);
-          alert('Flight added successfullly.');
+          this.notify('Flight added successfullly.');
         } else {
           let isFligthExist = false;
           q.forEach(doc => {
-            if (doc.data().dept_airport == payload.dept_airport) {
+            if (doc.data().airport_code == payload.airport_code) {
               if (doc.data().flight_no == payload.flight_no) {
                 if (doc.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
-                  alert('Flight already exist.');
+                  this.notify('Flight already exist.');
                 }
               }
             }
@@ -80,11 +87,13 @@ export class AppComponent {
 
           if (!isFligthExist) {
             this.firestore.collection('FlightInfo').add(payload);
-            alert('Flight added successfullly.');
+            this.notify('Flight added successfullly.');
           }
         }
+        this.showLoader = false;
       }, (error) => {
         console.log(error);
+        this.showLoader = false;
       });
     }
   }
@@ -96,33 +105,35 @@ export class AppComponent {
     let departDate = this.departDate.nativeElement.value;
 
     if (!flightNum) {
-      alert('Flight number required.');
+      this.notify('Flight number required.');
     } else if (!airportName) {
-      alert('Please select the airport.');
+      this.notify('Please select the airport.');
     } else if (!departDate) {
-      alert('Please select the departure date.');
+      this.notify('Please select the departure date.');
     } else {
 
       let payload = {
         flight_no: flightNum,
         dept_airport: airportName,
-        depart_date: departDate
+        airport_code: airportName.split('-')[0],
+        depart_date: departDate,
       }
 
+      this.showLoader = true;
       this.firestore.collection("FlightInfo").get().subscribe(r => {
         let isFligthExist = false;
         if (r.empty) {
-          alert("No flights available.");
+          this.notify("No flights available.");
         } else {
           r.forEach(doc => {
-            if (doc.data().dept_airport == payload.dept_airport) {
+            if (doc.data().airport_code == payload.airport_code) {
               if (doc.data().flight_no == payload.flight_no) {
                 if (doc.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
                   console.log(doc.id);
                   this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
                     if (p.empty) {
-                      alert("No passengers found.");
+                      this.notify("No passengers found.");
                     } else {
                       this.passengerInfo = [];
                       p.forEach(doc => {
@@ -139,10 +150,13 @@ export class AppComponent {
           });
 
           if (!isFligthExist) {
-            alert('No flights available.');
+            this.notify('No flights available.');
           }
         }
+
+        this.showLoader = false;
       }, (error) => {
+        this.showLoader = false;
         console.log(error);
       });
     }
@@ -153,19 +167,21 @@ export class AppComponent {
     let stationName = this.stationName.nativeElement.value;
 
     if (!stationName) {
-      alert('Please select the airport.');
+      this.notify('Please select the airport.');
     } else {
       let payload = {
-        dept_airport: stationName
+        dept_airport: stationName,
+        airport_code: stationName.split('-')[0],
       }
 
+      this.showLoader = true;
       this.firestore.collection("FlightInfo").get().subscribe(r => {
         let isFligthExist = false;
         if (r.empty) {
-          alert("No flights available.");
+          this.notify("No flights available.");
         } else {
           r.forEach(doc => {
-            if (doc.data().dept_airport == payload.dept_airport) {
+            if (doc.data().airport_code == payload.airport_code) {
               isFligthExist = true;
               console.log(doc.id);
               this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
@@ -182,14 +198,16 @@ export class AppComponent {
           console.log(this.passengerInfo);
 
           if (!isFligthExist) {
-            alert('No flights available.');
+            this.notify('No flights available.');
           }
 
           if (this.passengerInfo.length == 0 && isFligthExist) {
-            alert('No passengers available.');
+            this.notify('No passengers available.');
           }
         }
+        this.showLoader = false;
       }, (error) => {
+        this.showLoader = false;
         console.log(error);
       });
     }
@@ -204,9 +222,20 @@ export class AppComponent {
   }
 
   restrictSpecialChars(event) {
-    var regex = new RegExp("^[a-zA-Z0-9]+$");
+    var regex = new RegExp("^[0-9]+$");
     if (!regex.test(event.target.value)) {
-      event.target.value = event.target.value.replace(/[^a-zA-Z0-9]/g, "");
+      event.target.value = event.target.value.replace(/[^0-9]/g, "");
     }
+  }
+
+  async notify(msg) {
+    const alert = await this.alertController.create({
+      header: 'eStaff Meal',
+      message: msg,
+      backdropDismiss: false,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 }
