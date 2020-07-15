@@ -146,7 +146,7 @@
     font-weight: bold;
   }
 
-  .loading-wrapper{
+  .loading-wrapper {
     width: 100%;
     height: 100vh;
     background: #0000008a;
@@ -154,7 +154,7 @@
     z-index: 999999;
   }
 
-  .loading-wrapper div{
+  .loading-wrapper div {
     display: flex;
     height: 100%;
     align-items: center;
@@ -185,7 +185,8 @@
       <h4>By Flight</h4>
       <fieldset>
         <legend>Flight Number</legend>
-        <input type="text" minLength='4' maxLength='4' placeholder='Enter the flight number' (input)='restrictSpecialChars($event)' #flightNum>
+        <input type="text" minLength='4' maxLength='4' placeholder='Enter the flight number'
+          (input)='restrictSpecialChars($event)' [(ngModel)]='flightNum'>
       </fieldset>
       <fieldset>
         <legend>Airport</legend>
@@ -229,40 +230,16 @@
         <th>Arrival Airport</th>
         <th>Updated on</th>
       </tr>
-      <tr>
-        <td>Peter Parker</td>
-        <td>KDL009484</td>
-        <td>SV009484</td>
-        <td>Jeddah</td>
-        <td>Riyah</td>
-        <td>2020-06-09</td>
-      </tr>
-      <tr>
-        <td>Peter Parker</td>
-        <td>KDL009484</td>
-        <td>SV009484</td>
-        <td>Jeddah</td>
-        <td>Riyah</td>
-        <td>2020-06-09</td>
-      </tr>
-      <tr>
-        <td>Peter Parker</td>
-        <td>KDL009484</td>
-        <td>SV009484</td>
-        <td>Jeddah</td>
-        <td>Riyah</td>
-        <td>2020-06-09</td>
-      </tr>
-      <tr>
-        <td>Peter Parker</td>
-        <td>KDL009484</td>
-        <td>SV009484</td>
-        <td>Jeddah</td>
-        <td>Riyah</td>
-        <td>2020-06-09</td>
+      <tr *ngFor='let passenger of passengerInfo'>
+        <td>{{passenger.pass_name}}</td>
+        <td>{{passenger.book_ref}}</td>
+        <td>{{passenger.eticket_ref}}</td>
+        <td>{{passenger.dept_code}}</td>
+        <td>{{passenger.arr_code}}</td>
+        <td>{{passenger.update_date}}</td>
       </tr>
     </table>
-    <p *ngIf='passengerInfo.length > 0'>Total</p>
+    <p *ngIf='passengerInfo.length > 0'>Total: Number of Passengers {{passengerInfo.length}}</p>
   </div>
 </div>
 

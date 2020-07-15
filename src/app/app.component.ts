@@ -14,44 +14,52 @@ export class AppComponent {
 
   airportList: any;
   passengerInfo = [];
-  currentDate = new Date();
+  currentDate: any;
   minDate: any;
   showLoader: boolean = false;
+  flightNum: any;
 
   @ViewChild('departDate') departDate;
   @ViewChild('airportName') airportName;
   @ViewChild('stationName') stationName;
-  @ViewChild('flightNum') flightNum;
 
   constructor(
     private firestore: AngularFirestore,
     private datePipe: DatePipe,
     private alertController: AlertController,
     private httpClient: HttpClient) {
-
-    this.fetchAirportList();
-    this.minDate = this.datePipe.transform(new Date, 'yyyy-MM-dd');
+    this.initialize();
 
     //this.firestore.doc('FlightInfo/' +payload.flight_no).update(res);
     //this.firestore.doc('FlightInfo/' + payload.flight_no).delete();
 
     // let passenger = {
-    //   pass_name: 'Peter Parker',
+    //   pass_name: 'Muthuraja',
     //   book_ref: 'KDL009484',
-    //   dept_airport: 'Jeddah [King Abdul Aziz Airport]',
-    //   arr_airport: 'Riyadh [King Khalid Airport]',
-    //   eticket_ref: 'SV009484',
-    //   update_date: this.datepipe.transform(new Date(), 'dd/MM/yyyy')
+    //   dept_airport: 'Addis Ababa [Bole], Ethiopia',
+    //   dept_code: 'ADD',
+    //   arr_airport: 'Abha, Saudi Arabia',
+    //   arr_code: 'AHB',
+    //   eticket_ref: 'SV23890',
+    //   update_date: this.datePipe.transform(new Date(), 'dd/MM/yyyy')
     // }
+
+    //this.firestore.collection('FlightInfo').doc('PfhTH4b8CX5QNyriN3Ar').collection('Passengers').add(passenger);
   }
 
-  addFlight() {
+  initialize() {
+    this.fetchAirportList();
+    this.currentDate = new Date();
+    this.minDate = this.datePipe.transform(new Date, 'yyyy-MM-dd');
+    this.flightNum = '';
+  }
 
-    let flightNum = this.flightNum.nativeElement.value;
+
+  addFlight() {
     let airportName = this.airportName.nativeElement.value;
     let departDate = this.departDate.nativeElement.value;
 
-    if (!flightNum) {
+    if (!this.flightNum) {
       this.notify('Flight number required.');
     } else if (!airportName) {
       this.notify('Please select the airport.');
@@ -60,18 +68,20 @@ export class AppComponent {
     } else {
 
       let payload = {
-        flight_no: flightNum,
+        flight_no: this.flightNum,
         dept_airport: airportName,
-        airport_code: airportName.split('-')[0],
+        airport_code: airportName.split('-')[0].trim(),
         depart_date: departDate
       }
 
+      this.passengerInfo = [];
       this.showLoader = true;
       this.firestore.collection("FlightInfo").get().subscribe(q => {
         if (q.empty) {
-          console.log("no collection");
+          console.log("FlightInfo>>>>>>>no collection");
           this.firestore.collection('FlightInfo').add(payload);
           this.notify('Flight added successfullly.');
+          this.initialize();
         } else {
           let isFligthExist = false;
           q.forEach(doc => {
@@ -88,6 +98,7 @@ export class AppComponent {
           if (!isFligthExist) {
             this.firestore.collection('FlightInfo').add(payload);
             this.notify('Flight added successfullly.');
+            this.initialize();
           }
         }
         this.showLoader = false;
@@ -98,14 +109,15 @@ export class AppComponent {
     }
   }
 
-  findPassengerByFlight() {
 
-    let flightNum = this.flightNum.nativeElement.value;
+  findPassengerByFlight() {
     let airportName = this.airportName.nativeElement.value;
     let departDate = this.departDate.nativeElement.value;
 
-    if (!flightNum) {
+    if (!this.flightNum) {
       this.notify('Flight number required.');
+    } else if (this.flightNum.length < 4) {
+      this.notify('Flight number is not valid.');
     } else if (!airportName) {
       this.notify('Please select the airport.');
     } else if (!departDate) {
@@ -113,9 +125,9 @@ export class AppComponent {
     } else {
 
       let payload = {
-        flight_no: flightNum,
+        flight_no: this.flightNum,
         dept_airport: airportName,
-        airport_code: airportName.split('-')[0],
+        airport_code: airportName.split('-')[0].trim(),
         depart_date: departDate,
       }
 
@@ -124,7 +136,9 @@ export class AppComponent {
         let isFligthExist = false;
         if (r.empty) {
           this.notify("No flights available.");
+          this.passengerInfo = [];
         } else {
+          this.passengerInfo = [];
           r.forEach(doc => {
             if (doc.data().airport_code == payload.airport_code) {
               if (doc.data().flight_no == payload.flight_no) {
@@ -132,15 +146,10 @@ export class AppComponent {
                   isFligthExist = true;
                   console.log(doc.id);
                   this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
-                    if (p.empty) {
-                      this.notify("No passengers found.");
-                    } else {
-                      this.passengerInfo = [];
-                      p.forEach(doc => {
-                        this.passengerInfo.push(doc.data());
-                      });
-                      console.log(this.passengerInfo);
-                    }
+                    p.forEach(doc => {
+                      this.passengerInfo.push(doc.data());
+                    });
+                    console.log(this.passengerInfo);
                   }, (error) => {
                     console.log(error);
                   });
@@ -151,9 +160,15 @@ export class AppComponent {
 
           if (!isFligthExist) {
             this.notify('No flights available.');
+            this.passengerInfo = [];
           }
-        }
 
+          setTimeout(() => {
+            if (this.passengerInfo.length == 0 && isFligthExist) {
+              this.notify('No passengers found.');
+            }
+          }, 1000);
+        }
         this.showLoader = false;
       }, (error) => {
         this.showLoader = false;
@@ -162,8 +177,8 @@ export class AppComponent {
     }
   }
 
-  findPassengerByStation() {
 
+  findPassengerByStation() {
     let stationName = this.stationName.nativeElement.value;
 
     if (!stationName) {
@@ -171,7 +186,7 @@ export class AppComponent {
     } else {
       let payload = {
         dept_airport: stationName,
-        airport_code: stationName.split('-')[0],
+        airport_code: stationName.split('-')[0].trim(),
       }
 
       this.showLoader = true;
@@ -179,14 +194,17 @@ export class AppComponent {
         let isFligthExist = false;
         if (r.empty) {
           this.notify("No flights available.");
+          this.passengerInfo = [];
         } else {
+
+          this.passengerInfo = [];
           r.forEach(doc => {
             if (doc.data().airport_code == payload.airport_code) {
               isFligthExist = true;
               console.log(doc.id);
               this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
-                this.passengerInfo = [];
                 p.forEach(doc => {
+                  console.log(doc.data());
                   this.passengerInfo.push(doc.data());
                 });
               }, (error) => {
@@ -195,15 +213,16 @@ export class AppComponent {
             }
           });
 
-          console.log(this.passengerInfo);
-
           if (!isFligthExist) {
             this.notify('No flights available.');
+            this.passengerInfo = [];
           }
 
-          if (this.passengerInfo.length == 0 && isFligthExist) {
-            this.notify('No passengers available.');
-          }
+          setTimeout(() => {
+            if (this.passengerInfo.length == 0 && isFligthExist) {
+              this.notify('No passengers found.');
+            }
+          }, 1000);
         }
         this.showLoader = false;
       }, (error) => {
@@ -214,7 +233,7 @@ export class AppComponent {
   }
 
   fetchAirportList() {
-    this.httpClient.get('assets/json/airports.json').subscribe(r => {
+    this.httpClient.get('https://run.mocky.io/v3/dcf43445-82d1-4eca-a051-d3752a5bdf56').subscribe(r => {
       this.airportList = r['Airports'];
     }, (error) => {
       console.log(error);
