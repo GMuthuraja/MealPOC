@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { HttpClient } from "@angular/common/http";
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -10,13 +11,21 @@ import { DatePipe } from '@angular/common';
 
 export class AppComponent {
 
-  depatureDate: any;
-  airportName: any;
-  flightNum: any;
+  airportList: any;
+  passengerInfo = [];
+  currentDate = new Date();
+
+  @ViewChild('departDate') departDate;
+  @ViewChild('airportName') airportName;
+  @ViewChild('stationName') stationName;
+  @ViewChild('flightNum') flightNum;
 
   constructor(
     private firestore: AngularFirestore,
-    private datepipe: DatePipe) {
+    private datePipe: DatePipe,
+    private httpClient: HttpClient) {
+
+    this.fetchAirportList();
 
     //this.firestore.doc('FlightInfo/' +payload.flight_no).update(res);
     //this.firestore.doc('FlightInfo/' + payload.flight_no).delete();
@@ -32,33 +41,38 @@ export class AppComponent {
   }
 
   addFlight() {
-    if (!this.flightNum) {
-      alert('Flight number required!');
-    } else if (!this.airportName) {
-      alert('Please select airport name!');
-    } else if (!this.depatureDate) {
-      alert('Please select departure date!');
+
+    let flightNum = this.flightNum.nativeElement.value;
+    let airportName = this.airportName.nativeElement.value;
+    let departDate = this.departDate.nativeElement.value;
+
+    if (!flightNum) {
+      alert('Flight number required.');
+    } else if (!airportName) {
+      alert('Please select the airport.');
+    } else if (!departDate) {
+      alert('Please select the departure date.');
     } else {
 
       let payload = {
-        dept_airport: this.airportName,
-        depart_date: this.depatureDate,
-        flight_no: this.flightNum
+        flight_no: flightNum,
+        dept_airport: airportName,
+        depart_date: departDate
       }
 
-      this.firestore.collection("FlightInfo").get().subscribe(querySnapshot => {
-        if (querySnapshot.empty) {
+      this.firestore.collection("FlightInfo").get().subscribe(q => {
+        if (q.empty) {
           console.log("no collection");
           this.firestore.collection('FlightInfo').add(payload);
-          alert('Flight added successfullly!');
+          alert('Flight added successfullly.');
         } else {
           let isFligthExist = false;
-          querySnapshot.forEach(doc => {
+          q.forEach(doc => {
             if (doc.data().dept_airport == payload.dept_airport) {
               if (doc.data().flight_no == payload.flight_no) {
                 if (doc.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
-                  alert('Flight already exist!');
+                  alert('Flight already exist.');
                 }
               }
             }
@@ -66,7 +80,7 @@ export class AppComponent {
 
           if (!isFligthExist) {
             this.firestore.collection('FlightInfo').add(payload);
-            alert('Flight added successfullly!');
+            alert('Flight added successfullly.');
           }
         }
       }, (error) => {
@@ -75,41 +89,46 @@ export class AppComponent {
     }
   }
 
-  findFlight() {
-    if (!this.flightNum) {
-      alert('Flight number required!');
-    } else if (!this.airportName) {
-      alert('Please select airport name!');
-    } else if (!this.depatureDate) {
-      alert('Please select departure date!');
+  findPassengerByFlight() {
+
+    let flightNum = this.flightNum.nativeElement.value;
+    let airportName = this.airportName.nativeElement.value;
+    let departDate = this.departDate.nativeElement.value;
+
+    if (!flightNum) {
+      alert('Flight number required.');
+    } else if (!airportName) {
+      alert('Please select the airport.');
+    } else if (!departDate) {
+      alert('Please select the departure date.');
     } else {
 
       let payload = {
-        dept_airport: this.airportName,
-        depart_date: this.depatureDate,
-        flight_no: this.flightNum
+        flight_no: flightNum,
+        dept_airport: airportName,
+        depart_date: departDate
       }
 
-      this.firestore.collection("FlightInfo").get().subscribe(querySnapshot => {
-        if (querySnapshot.empty) {
-          alert("No flights available!");
+      this.firestore.collection("FlightInfo").get().subscribe(r => {
+        let isFligthExist = false;
+        if (r.empty) {
+          alert("No flights available.");
         } else {
-          let isFligthExist = false;
-          querySnapshot.forEach(doc => {
+          r.forEach(doc => {
             if (doc.data().dept_airport == payload.dept_airport) {
               if (doc.data().flight_no == payload.flight_no) {
                 if (doc.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
                   console.log(doc.id);
-                  this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(passenger => {
-                    if (passenger.empty) {
-                      alert("No passengers found!");
+                  this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
+                    if (p.empty) {
+                      alert("No passengers found.");
                     } else {
-                      let passengerInfo = [];
-                      passenger.forEach(doc => {
-                        passengerInfo.push(doc.data());
+                      this.passengerInfo = [];
+                      p.forEach(doc => {
+                        this.passengerInfo.push(doc.data());
                       });
-                      console.log(passengerInfo);
+                      console.log(this.passengerInfo);
                     }
                   }, (error) => {
                     console.log(error);
@@ -120,7 +139,7 @@ export class AppComponent {
           });
 
           if (!isFligthExist) {
-            alert('No flights available');
+            alert('No flights available.');
           }
         }
       }, (error) => {
@@ -129,7 +148,65 @@ export class AppComponent {
     }
   }
 
-  findFlightByAirport() {
+  findPassengerByStation() {
 
+    let stationName = this.stationName.nativeElement.value;
+
+    if (!stationName) {
+      alert('Please select the airport.');
+    } else {
+      let payload = {
+        dept_airport: stationName
+      }
+
+      this.firestore.collection("FlightInfo").get().subscribe(r => {
+        let isFligthExist = false;
+        if (r.empty) {
+          alert("No flights available.");
+        } else {
+          r.forEach(doc => {
+            if (doc.data().dept_airport == payload.dept_airport) {
+              isFligthExist = true;
+              console.log(doc.id);
+              this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
+                this.passengerInfo = [];
+                p.forEach(doc => {
+                  this.passengerInfo.push(doc.data());
+                });
+              }, (error) => {
+                console.log(error);
+              });
+            }
+          });
+
+          console.log(this.passengerInfo);
+
+          if (!isFligthExist) {
+            alert('No flights available.');
+          }
+
+          if (this.passengerInfo.length == 0 && isFligthExist) {
+            alert('No passengers available.');
+          }
+        }
+      }, (error) => {
+        console.log(error);
+      });
+    }
+  }
+
+  fetchAirportList() {
+    this.httpClient.get('assets/json/airports.json').subscribe(r => {
+      this.airportList = r['Airports'];
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  restrictSpecialChars(event) {
+    var regex = new RegExp("^[a-zA-Z0-9]+$");
+    if (!regex.test(event.target.value)) {
+      event.target.value = event.target.value.replace(/[^a-zA-Z0-9]/g, "");
+    }
   }
 }

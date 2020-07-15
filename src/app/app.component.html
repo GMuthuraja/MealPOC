@@ -176,40 +176,42 @@
       <h4>By Flight</h4>
       <fieldset>
         <legend>Flight Number</legend>
-        <input type="text" value="1022" [(ngModel)]="flightNum">
+        <input type="text" minLength='4' maxLength='6' placeholder='Enter the flight number' (input)='restrictSpecialChars($event)' #flightNum>
       </fieldset>
       <fieldset>
         <legend>Airport</legend>
-        <select [(ngModel)]="airportName">
-          <option>JED - Jeddah [King Abdul Aziz Airport]</option>
-          <option>RUH - Riyadh [King Khalid Airport]</option>
+        <select #airportName>
+          <option *ngFor='let airport of airportList' [selected]="airport.AirportCode == 'JED'">
+            {{airport.AirportCode}} - {{airport.AirportName}}
+          </option>
         </select>
       </fieldset>
       <fieldset>
         <legend>Flight date</legend>
-        <input type="date" value="2019-04-15" [(ngModel)]="depatureDate">
+        <input type="date" [value]="currentDate | date: 'yyyy-MM-dd'" #departDate>
       </fieldset>
       <div class="flex">
         <button type="button" class="half buttonL" (click)="addFlight()">Add</button>
-        <button type="button" class="half buttonR" (click)="findFlight()">Find</button>
+        <button type="button" class="half buttonR" (click)="findPassengerByFlight()">Find</button>
       </div>
     </div>
     <div class="form2">
       <h4>By Station</h4>
       <fieldset>
         <legend>Airport</legend>
-        <select>
-          <option>JED - Jeddah [King Abdul Aziz Airport]</option>
-          <option>RUH - Riyadh [King Khalid Airport]</option>
+        <select #stationName>
+          <option *ngFor='let airport of airportList' [selected]="airport.AirportCode == 'JED'">
+            {{airport.AirportCode}} - {{airport.AirportName}}
+          </option>
         </select>
       </fieldset>
       <div class="flex">
-        <button type="button" class="full" (click)="findFlightByAirport()">Find</button>
+        <button type="button" class="full" (click)="findPassengerByStation()">Find</button>
       </div>
     </div>
   </div>
   <div>
-    <table>
+    <table *ngIf='passengerInfo.length > 0'>
       <tr>
         <th>Passenger Name</th>
         <th>Booking Reference</th>
@@ -251,7 +253,7 @@
         <td>2020-06-09</td>
       </tr>
     </table>
-    <p>Total</p>
+    <p *ngIf='passengerInfo.length > 0'>Total</p>
   </div>
 </div>
 
