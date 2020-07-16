@@ -70,7 +70,7 @@ export class AppComponent {
       let payload = {
         flight_no: this.flightNum,
         dept_airport: airportName,
-        airport_code: airportName.split('-')[0].trim(),
+        dept_code: airportName.split('-')[0].trim(),
         depart_date: departDate
       }
 
@@ -85,7 +85,7 @@ export class AppComponent {
         } else {
           let isFligthExist = false;
           q.forEach(doc => {
-            if (doc.data().airport_code == payload.airport_code) {
+            if (doc.data().dept_code == payload.dept_code) {
               if (doc.data().flight_no == payload.flight_no) {
                 if (doc.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
@@ -127,7 +127,7 @@ export class AppComponent {
       let payload = {
         flight_no: this.flightNum,
         dept_airport: airportName,
-        airport_code: airportName.split('-')[0].trim(),
+        dept_code: airportName.split('-')[0].trim(),
         depart_date: departDate,
       }
 
@@ -140,7 +140,7 @@ export class AppComponent {
         } else {
           this.passengerInfo = [];
           r.forEach(doc => {
-            if (doc.data().airport_code == payload.airport_code) {
+            if (doc.data().dept_code == payload.dept_code) {
               if (doc.data().flight_no == payload.flight_no) {
                 if (doc.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
@@ -186,7 +186,7 @@ export class AppComponent {
     } else {
       let payload = {
         dept_airport: stationName,
-        airport_code: stationName.split('-')[0].trim(),
+        dept_code: stationName.split('-')[0].trim(),
       }
 
       this.showLoader = true;
@@ -199,7 +199,7 @@ export class AppComponent {
 
           this.passengerInfo = [];
           r.forEach(doc => {
-            if (doc.data().airport_code == payload.airport_code) {
+            if (doc.data().dept_code == payload.dept_code) {
               isFligthExist = true;
               console.log(doc.id);
               this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
