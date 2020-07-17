@@ -135,7 +135,7 @@ export class AppComponent {
       this.firestore.collection("FlightInfo").get().subscribe(r => {
         let isFligthExist = false;
         if (r.empty) {
-          this.notify("No flights available.");
+          this.notify("No records found.");
           this.passengerInfo = [];
         } else {
           this.passengerInfo = [];
@@ -159,13 +159,13 @@ export class AppComponent {
           });
 
           if (!isFligthExist) {
-            this.notify('No flights available.');
+            this.notify('No records found.');
             this.passengerInfo = [];
           }
 
           setTimeout(() => {
             if (this.passengerInfo.length == 0 && isFligthExist) {
-              this.notify('No passengers found.');
+              this.notify('No records found.');
             }
           }, 1000);
         }
@@ -193,7 +193,7 @@ export class AppComponent {
       this.firestore.collection("FlightInfo").get().subscribe(r => {
         let isFligthExist = false;
         if (r.empty) {
-          this.notify("No flights available.");
+          this.notify("No records found.");
           this.passengerInfo = [];
         } else {
 
@@ -214,13 +214,13 @@ export class AppComponent {
           });
 
           if (!isFligthExist) {
-            this.notify('No flights available.');
+            this.notify('No records found.');
             this.passengerInfo = [];
           }
 
           setTimeout(() => {
             if (this.passengerInfo.length == 0 && isFligthExist) {
-              this.notify('No passengers found.');
+              this.notify('No records found.');
             }
           }, 1000);
         }
@@ -233,10 +233,13 @@ export class AppComponent {
   }
 
   fetchAirportList() {
+    this.showLoader = true;
     this.httpClient.get('https://run.mocky.io/v3/dcf43445-82d1-4eca-a051-d3752a5bdf56').subscribe(r => {
       this.airportList = r['Airports'];
+      this.showLoader = false;
     }, (error) => {
       console.log(error);
+      this.showLoader = false;
     });
   }
 
