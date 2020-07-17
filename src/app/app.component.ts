@@ -29,28 +29,12 @@ export class AppComponent {
     private alertController: AlertController,
     private httpClient: HttpClient) {
     this.initialize();
-
-    //this.firestore.doc('FlightInfo/' +payload.flight_no).update(res);
-    //this.firestore.doc('FlightInfo/' + payload.flight_no).delete();
-
-    // let passenger = {
-    //   pass_name: 'Muthuraja',
-    //   book_ref: 'KDL009484',
-    //   dept_airport: 'Addis Ababa [Bole], Ethiopia',
-    //   dept_code: 'ADD',
-    //   arr_airport: 'Abha, Saudi Arabia',
-    //   arr_code: 'AHB',
-    //   eticket_ref: 'SV23890',
-    //   update_date: this.datePipe.transform(new Date(), 'dd/MM/yyyy')
-    // }
-
-    //this.firestore.collection('FlightInfo').doc('PfhTH4b8CX5QNyriN3Ar').collection('Passengers').add(passenger);
   }
 
   initialize() {
     this.fetchAirportList();
     this.currentDate = new Date();
-    this.minDate = this.datePipe.transform(new Date, 'yyyy-MM-dd');
+    this.minDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     this.flightNum = '';
   }
 
@@ -261,3 +245,6 @@ export class AppComponent {
     await alert.present();
   }
 }
+
+    //this.firestore.doc('FlightInfo/' +payload.flight_no).update(res);
+    //this.firestore.doc('FlightInfo/' + payload.flight_no).delete();
