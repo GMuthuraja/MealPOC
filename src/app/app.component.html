@@ -89,6 +89,7 @@
     border: none !important;
     margin-top: 8px;
     border-radius: 5px;
+    cursor: pointer;
   }
 
   button:focus {
@@ -162,6 +163,21 @@
     color: #fff;
   }
 
+  .btnTransRed {
+    color: #E30A0A;
+    font-weight: bold;
+    background: transparent;
+    text-align: center;
+    margin-top: 0 !important;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+  }
+
+  .bgWhite {
+    background: #fff;
+  }
+
   /* Responsive Styles */
   @mediascreen and (max-width: 767px) {}
 
@@ -230,13 +246,15 @@
         <th>Arrival Airport</th>
         <th>Updated on</th>
       </tr>
-      <tr *ngFor='let passenger of passengerInfo'>
-        <td>{{passenger.pass_name}}</td>
-        <td>{{passenger.book_ref}}</td>
-        <td>{{passenger.eticket_ref}}</td>
-        <td>{{passenger.dept_code}}</td>
-        <td>{{passenger.arr_code}}</td>
-        <td>{{passenger.update_date}}</td>
+      <tr *ngFor='let passenger of passengerInfo; let id = index;'>
+        <td>{{passenger.data.pass_name}}</td>
+        <td>{{passenger.data.book_ref}}</td>
+        <td>{{passenger.data.eticket_ref}}</td>
+        <td>{{passenger.data.dept_code}}</td>
+        <td>{{passenger.data.arr_code}}</td>
+        <td>{{passenger.data.update_date}}</td>
+        <td class="bgWhite"><button type="button" class="btnTransRed"
+            (click)="delete(passenger.fid, passenger.pid, id)">Delete</button></td>
       </tr>
     </table>
     <p *ngIf='passengerInfo.length > 0'>Total: Number of Passengers {{passengerInfo.length}}</p>

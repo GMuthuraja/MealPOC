@@ -16,6 +16,7 @@ export class AppComponent {
   passengerInfo = [];
   currentDate: any;
   minDate: any;
+  //maxDate: any;
   showLoader: boolean = false;
   flightNum: any;
 
@@ -35,6 +36,10 @@ export class AppComponent {
     this.fetchAirportList();
     this.currentDate = new Date();
     this.minDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    // var twoday = new Date();
+    // var numberOfDaysToAdd = 2;
+    // twoday.setDate(twoday.getDate() + numberOfDaysToAdd);
+    // this.maxDate = this.datePipe.transform(twoday, 'yyyy-MM-dd');
     this.flightNum = '';
   }
 
@@ -60,18 +65,18 @@ export class AppComponent {
 
       this.passengerInfo = [];
       this.showLoader = true;
-      this.firestore.collection("FlightInfo").get().subscribe(q => {
-        if (q.empty) {
+      this.firestore.collection("FlightInfo").get().subscribe(f => {
+        if (f.empty) {
           console.log("FlightInfo>>>>>>>no collection");
           this.firestore.collection('FlightInfo').add(payload);
           this.notify('Flight added successfullly.');
           this.initialize();
         } else {
           let isFligthExist = false;
-          q.forEach(doc => {
-            if (doc.data().dept_code == payload.dept_code) {
-              if (doc.data().flight_no == payload.flight_no) {
-                if (doc.data().depart_date == payload.depart_date) {
+          f.forEach(flight => {
+            if (flight.data().dept_code == payload.dept_code) {
+              if (flight.data().flight_no == payload.flight_no) {
+                if (flight.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
                   this.notify('Flight already exist.');
                 }
@@ -123,15 +128,16 @@ export class AppComponent {
           this.passengerInfo = [];
         } else {
           this.passengerInfo = [];
-          r.forEach(doc => {
-            if (doc.data().dept_code == payload.dept_code) {
-              if (doc.data().flight_no == payload.flight_no) {
-                if (doc.data().depart_date == payload.depart_date) {
+          r.forEach(flight => {
+            if (flight.data().dept_code == payload.dept_code) {
+              if (flight.data().flight_no == payload.flight_no) {
+                if (flight.data().depart_date == payload.depart_date) {
                   isFligthExist = true;
-                  console.log(doc.id);
-                  this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
-                    p.forEach(doc => {
-                      this.passengerInfo.push(doc.data());
+                  console.log(flight.id);
+                  this.firestore.collection('FlightInfo').doc(flight.id).collection("Passengers").get().subscribe(p => {
+                    p.forEach(passenger => {
+                      console.log(passenger.data());
+                      this.passengerInfo.push({ fid: flight.id, pid: passenger.id, data: passenger.data() });
                     });
                     console.log(this.passengerInfo);
                   }, (error) => {
@@ -164,15 +170,15 @@ export class AppComponent {
 
   findPassengerByStation() {
     let stationName = this.stationName.nativeElement.value;
-
     if (!stationName) {
       this.notify('Please select the airport.');
     } else {
       let payload = {
         dept_airport: stationName,
-        dept_code: stationName.split('-')[0].trim(),
+        dept_code: stationName?.split('-')[0].trim(),
       }
 
+      this.initialize();
       this.showLoader = true;
       this.firestore.collection("FlightInfo").get().subscribe(r => {
         let isFligthExist = false;
@@ -182,14 +188,14 @@ export class AppComponent {
         } else {
 
           this.passengerInfo = [];
-          r.forEach(doc => {
-            if (doc.data().dept_code == payload.dept_code) {
+          r.forEach(flight => {
+            if (flight.data().dept_code == payload.dept_code) {
               isFligthExist = true;
-              console.log(doc.id);
-              this.firestore.collection('FlightInfo').doc(doc.id).collection("Passengers").get().subscribe(p => {
-                p.forEach(doc => {
-                  console.log(doc.data());
-                  this.passengerInfo.push(doc.data());
+              console.log(flight.id);
+              this.firestore.collection('FlightInfo').doc(flight.id).collection("Passengers").get().subscribe(p => {
+                p.forEach(passenger => {
+                  console.log(passenger.data());
+                  this.passengerInfo.push({ fid: flight.id, pid: passenger.id, data: passenger.data() });
                 });
               }, (error) => {
                 console.log(error);
@@ -215,6 +221,50 @@ export class AppComponent {
       });
     }
   }
+
+
+  async delete(fid, pid, index) {
+    console.log('Flight>>>>>>>', fid);
+    console.log('Passenger>>>>>>>', pid);
+    console.log('Index>>>>>>>', index);
+
+    let confirm = await this.alertController.create({
+      header: 'eStaff Meal',
+      message: 'Are you sure to delete this passenger?',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'CANCEL',
+          handler: () => {
+            confirm.dismiss(false);
+            return false;
+          }
+        }, {
+          text: 'OK',
+          handler: () => {
+            confirm.dismiss(true);
+            return false;
+          }
+        }
+      ]
+    });
+
+    //open confirm popup
+    await confirm.present();
+
+    //on dismiss confirm popup after press 'Yes' or 'No'
+    await confirm.onDidDismiss().then(data => {
+      console.log(data);
+      if (data.data) {
+        this.firestore.collection('FlightInfo').doc(fid).collection('Passengers').doc(pid).delete().then(r => {
+          this.passengerInfo.splice(index, 1);
+        }).catch(error => {
+          console.log(error);
+        });
+      }
+    });
+  }
+
 
   fetchAirportList() {
     this.showLoader = true;
