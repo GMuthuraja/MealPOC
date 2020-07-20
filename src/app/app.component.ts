@@ -256,10 +256,13 @@ export class AppComponent {
     await confirm.onDidDismiss().then(data => {
       console.log(data);
       if (data.data) {
+        this.showLoader = true;
         this.firestore.collection('FlightInfo').doc(fid).collection('Passengers').doc(pid).delete().then(r => {
           this.passengerInfo.splice(index, 1);
+          this.showLoader = false;
         }).catch(error => {
           console.log(error);
+          this.showLoader = false;
         });
       }
     });
