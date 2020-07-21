@@ -229,7 +229,7 @@ export class AppComponent {
     console.log('Index>>>>>>>', index);
 
     let confirm = await this.alertController.create({
-      header: 'eStaff Meal',
+      header: 'Saudia Meal',
       message: 'Are you sure to delete this passenger?',
       backdropDismiss: false,
       buttons: [
@@ -289,7 +289,7 @@ export class AppComponent {
 
   async notify(msg) {
     const alert = await this.alertController.create({
-      header: 'eStaff Meal',
+      header: 'Saudia Meal',
       message: msg,
       backdropDismiss: false,
       buttons: ['OK']
